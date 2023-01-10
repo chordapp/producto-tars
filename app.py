@@ -11,6 +11,11 @@ def init():
 
     device = 0 if torch.cuda.is_available() else -1
     model = TARSTagger.load("tars-ner").to(device)
+    model.add_and_switch_to_new_task(
+        task_name="chord producto ner",
+        label_dictionary=["brand", "product"],
+        label_type="ner",
+    )
 
 # Inference is ran for every server call
 # Reference your preloaded global model variable here.
@@ -30,10 +35,9 @@ def inference(model_inputs: dict) -> dict:
     except StopIteration:
         print("Error while predicting")
 
+    spans = []
     for sentence in sentences:
         new_spans = sentence.get_spans("ner")
-        if len(new_spans) > 0:
-            num_docs_with_spans += 1
         spans += new_spans
         for token in sentence:
             token.clear_embeddings()
