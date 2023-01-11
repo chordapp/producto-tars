@@ -11,11 +11,6 @@ def init():
 
     device = 0 if torch.cuda.is_available() else -1
     model = TARSTagger.load("tars-ner").to(device)
-    model.add_and_switch_to_new_task(
-        task_name="chord producto ner",
-        label_dictionary=["brand", "product"],
-        label_type="ner",
-    )
 
 # Inference is ran for every server call
 # Reference your preloaded global model variable here.
@@ -23,6 +18,12 @@ def init():
 
 def inference(model_inputs: dict) -> dict:
     global model
+
+    model.add_and_switch_to_new_task(
+        task_name="chord producto ner",
+        label_dictionary=["brand", "product"],
+        label_type="ner",
+    )
 
     # Parse out your arguments
     texts = model_inputs["texts"]
